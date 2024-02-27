@@ -8,7 +8,7 @@ spec:
   targetAllocator:
     image: ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:main
     enabled: true
-    serviceAccount: otelcol
+    serviceAccount: otelcol-collector
     prometheusCR:
       enabled: true
       serviceMonitorSelector:

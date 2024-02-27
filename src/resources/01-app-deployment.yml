@@ -2,55 +2,42 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: application
-
+  name: opentelemetry
+  
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: py-otel-server
-  namespace: application
-  labels:
-    app: py-otel-server
-    app.kubernetes.io/name: py-otel-server
+  name: my-app
+  namespace: opentelemetry
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: py-otel-server
-      app.kubernetes.io/name: py-otel-server
+      app: my-app
   template:
     metadata:
       labels:
-        app: py-otel-server
-        app.kubernetes.io/name: py-otel-server
+        app: my-app
     spec:
       containers:
-      - name: py-otel-server
-        image: otel-python-lab:0.1.0-py-otel-server
-        # image: docker.io/library/otel-python-lab:0.1.0-py-otel-server
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 8082
-          name: py-server-port
-        env:
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=py-otel-server,service.version=0.1.0
-
+        - name: my-app
+          image: otel-target-allocator-talk:0.1.0-py-ta-example
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: prom
+              containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: py-otel-server-svc
-  namespace: application
+  name: my-app
+  namespace: opentelemetry
   labels:
-    app: py-otel-server
-    app.kubernetes.io/name: py-otel-server
+    app: my-app
 spec:
   selector:
-    app.kubernetes.io/name: py-otel-server
+    app: my-app
   ports:
-  - name: py-server-port
-    protocol: TCP
-    port: 8082
-    targetPort: py-server-port
+    - name: prom
+      port: 8080
