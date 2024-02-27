@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: application
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: py-otel-server
+  namespace: application
+  labels:
+    app: py-otel-server
+    app.kubernetes.io/name: py-otel-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: py-otel-server
+      app.kubernetes.io/name: py-otel-server
+  template:
+    metadata:
+      labels:
+        app: py-otel-server
+        app.kubernetes.io/name: py-otel-server
+    spec:
+      containers:
+      - name: py-otel-server
+        image: otel-python-lab:0.1.0-py-otel-server
+        # image: docker.io/library/otel-python-lab:0.1.0-py-otel-server
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8082
+          name: py-server-port
+        env:
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: service.name=py-otel-server,service.version=0.1.0
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: py-otel-server-svc
+  namespace: application
+  labels:
+    app: py-otel-server
+    app.kubernetes.io/name: py-otel-server
+spec:
+  selector:
+    app.kubernetes.io/name: py-otel-server
+  ports:
+  - name: py-server-port
+    protocol: TCP
+    port: 8082
+    targetPort: py-server-port

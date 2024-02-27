@@ -1,0 +1,48 @@
+version: '0.1'
+x-default-logging: &logging
+  options:
+    max-size: "5m"
+    max-file: "2"
+
+networks:
+  default:
+    name: otel-lab
+    driver: bridge
+
+services:
+
+  py-ta-example:
+    container_name: py-ta-example
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-ta-example
+    build:
+      context: ${CONTEXT}
+      dockerfile: Dockerfile.app
+    ports:
+      - "8080:8080"
+    # environment:
+    #   - OTEL_RESOURCE_ATTRIBUTES=service.name=py-ta-example,service.version=0.1.0
+    stop_grace_period: 1s
+
+  # py-otel-client:
+  #   container_name: py-otel-client
+  #   image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-otel-client
+  #   build:
+  #     context: ${CONTEXT}
+  #     dockerfile: Dockerfile.client
+  #   depends_on:
+  #     py-otel-server:
+  #       condition: service_started
+  #   environment:
+  #     - DESTINATION_URL=http://py-otel-server:8082/rolldice
+  #   stop_grace_period: 1s
+  # py-otel-server:
+  #   container_name: py-otel-server
+  #   image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-otel-server
+  #   build:
+  #     context: ${CONTEXT}
+  #     dockerfile: Dockerfile.server
+  #   ports:
+  #     - "8082:8082"
+  #   environment:
+  #     - OTEL_RESOURCE_ATTRIBUTES=service.name=py-otel-server,service.version=0.1.0
+  #   stop_grace_period: 1s
