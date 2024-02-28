@@ -6,9 +6,8 @@ metadata:
 spec:
   mode: statefulset
   targetAllocator:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:main
     enabled: true
-    serviceAccount: otelcol-collector
+    serviceAccount: opentelemetry-targetallocator-sa
     prometheusCR:
       enabled: true
       serviceMonitorSelector:
@@ -23,7 +22,7 @@ spec:
             static_configs:
             - targets: [ '0.0.0.0:8888' ]
         target_allocator:
-          endpoint: http://otelcol-targetallocator
+          endpoint: http://otelcol-targetallocator.opentelemetry.svc.cluster.local
           interval: 30s
           collector_id: "${POD_NAME}"
 
