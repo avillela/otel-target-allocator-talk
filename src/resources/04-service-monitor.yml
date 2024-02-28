@@ -10,6 +10,9 @@ spec:
   selector:
     matchLabels:
       app: my-app
+  namespaceSelector:
+      matchNames:
+        - opentelemetry
   endpoints:
     - port: prom
       path: /metrics
