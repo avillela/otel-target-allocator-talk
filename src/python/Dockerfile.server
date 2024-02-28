@@ -1,0 +1,20 @@
+FROM python:3.11-slim-bullseye
+
+RUN apt-get -qq update \
+    && apt-get install -y --no-install-recommends g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /app
+WORKDIR /app
+
+RUN pip install --upgrade pip
+ADD requirements.txt .
+RUN pip install -r requirements.txt
+
+RUN opentelemetry-bootstrap -a install
+
+ADD *.py ./
+
+EXPOSE 8082
+
+CMD ["opentelemetry-instrument", "python", "/app/server.py"]

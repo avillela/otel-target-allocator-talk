@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: py-otel-client
+  namespace: opentelemetry
+  labels:
+    app: my-app
+    app.kubernetes.io/name: py-otel-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+      app.kubernetes.io/name: py-otel-client
+  template:
+    metadata:
+      labels:
+        app: my-app
+        app.kubernetes.io/name: py-otel-client
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
+    spec:
+      containers:
+      - name: py-otel-client
+        image: otel-target-allocator-talk:0.1.0-py-otel-client
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8082
+          name: py-client-port
+        env:
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: service.name=py-otel-client,service.version=0.1.0
+          - name: DESTINATION_URL
+            value: http://py-otel-server-svc:8082/rolldice
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: py-otel-client-svc
+  namespace: opentelemetry
+  labels:
+    app: my-app
+    app.kubernetes.io/name: py-otel-client
+spec:
+  selector:
+    app.kubernetes.io/name: py-otel-client
+  ports:
+  - name: py-client-port
+    protocol: TCP
+    port: 8082
+    targetPort: py-client-port
