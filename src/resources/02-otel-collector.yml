@@ -14,6 +14,10 @@ spec:
         app: my-app
   config: |
     receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
       prometheus:
         config:
           scrape_configs:
@@ -26,13 +30,33 @@ spec:
           interval: 30s
           collector_id: "${POD_NAME}"
 
+    processors:
+      batch:
+
+    # connectors:
+    #   spanmetrics:
+
     exporters:
+      # otlp:
+      #   endpoint: "jaeger:4317"
+      #   tls:
+      #     insecure: true
       logging:
         verbosity: detailed
 
     service:
       pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          # exporters: [logging, spanmetrics]
+          exporters: [logging]
         metrics:
-          receivers: [prometheus]
+          # receivers: [otlp, spanmetrics, prometheus]
+          receivers: [otlp, prometheus]
           processors: []
+          exporters: [logging]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
           exporters: [logging]

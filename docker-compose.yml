@@ -10,39 +10,87 @@ networks:
     driver: bridge
 
 services:
+  py-otel-client:
+      container_name: py-otel-client
+      image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-otel-client
+      build:
+        context: ${CONTEXT}
+        dockerfile: Dockerfile.client
+      depends_on:
+        otel-collector:
+          condition: service_started
+        py-otel-server:
+          condition: service_started
+      environment:
+          - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4317
+          - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otel-collector:4317
+          - OTEL_RESOURCE_ATTRIBUTES=service.name=py-otel-client,service.version=0.1.0
+          - DESTINATION_URL=http://py-otel-server:8082/rolldice
+      stop_grace_period: 1s
+  py-otel-server:
+      container_name: py-otel-server
+      image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-otel-server
+      build:
+        context: ${CONTEXT}
+        dockerfile: Dockerfile.server
+      depends_on:
+        otel-collector:
+          condition: service_started
+      ports:
+        - "8082:8082"
+      environment:
+        - OTEL_TRACES_EXPORTER=console,otlp
+        - OTEL_METRICS_EXPORTER=console,otlp
+        - OTEL_LOGS_EXPORTER=console,otlp
+        - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+        - OTEL_RESOURCE_ATTRIBUTES=service.name=py-otel-server,service.version=0.1.0
+        - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
+        - OTEL_PYTHON_LOG_CORRELATION=true
+        - OTEL_PYTHON_LOG_LEVEL=debug
+      stop_grace_period: 1s
 
-  py-ta-example:
-    container_name: py-ta-example
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-ta-example
-    build:
-      context: ${CONTEXT}
-      dockerfile: Dockerfile.app
+
+  # ********************
+  # Telemetry Components
+  # ********************
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    command:
+      - "--memory.max-traces"
+      - "10000"
+      - "--query.base-path"
+      - "/jaeger/ui"
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
     ports:
-      - "8080:8080"
-    # environment:
-    #   - OTEL_RESOURCE_ATTRIBUTES=service.name=py-ta-example,service.version=0.1.0
-    stop_grace_period: 1s
+      - "16686:16686"                    # Jaeger UI
+      - "4317"                           # OTLP gRPC default port
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - METRICS_STORAGE_TYPE=prometheus
+    logging: *logging
 
-  # py-otel-client:
-  #   container_name: py-otel-client
-  #   image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-otel-client
-  #   build:
-  #     context: ${CONTEXT}
-  #     dockerfile: Dockerfile.client
-  #   depends_on:
-  #     py-otel-server:
-  #       condition: service_started
-  #   environment:
-  #     - DESTINATION_URL=http://py-otel-server:8082/rolldice
-  #   stop_grace_period: 1s
-  # py-otel-server:
-  #   container_name: py-otel-server
-  #   image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-otel-server
-  #   build:
-  #     context: ${CONTEXT}
-  #     dockerfile: Dockerfile.server
-  #   ports:
-  #     - "8082:8082"
-  #   environment:
-  #     - OTEL_RESOURCE_ATTRIBUTES=service.name=py-otel-server,service.version=0.1.0
-  #   stop_grace_period: 1s
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.93.0
+    container_name: otel-collector
+    deploy:
+      resources:
+        limits:
+          memory: 125M
+    restart: unless-stopped
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    volumes:
+      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
+    ports:
+      - "4317"
+      - "4318"
+    depends_on:
+      - jaeger
+    logging: *logging

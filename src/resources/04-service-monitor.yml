@@ -14,5 +14,9 @@ spec:
       matchNames:
         - opentelemetry
   endpoints:
-    - port: prom
-      path: /metrics
+    - port: py-client-port
+      interval: 15s
+    - port: py-server-port
+      interval: 15s
+    # - port: prom
+    #   path: /metrics
