@@ -46,7 +46,7 @@ Check Collector logs:
 kubectl logs -l app.kubernetes.io/component=opentelemetry-collector -n opentelemetry --follow
 
 # Option 2
-kubectl logs otelcol-collector-0 -n opentelemetry | grep "Name:" | sort | uniq | xsel -b
+kubectl logs otelcol-collector-0 -n opentelemetry | grep "Name:" | sort | uniq
 
 
 kubectl logs -l app.kubernetes.io/component=opentelemetry-targetallocator -n opentelemetry --follow

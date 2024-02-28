@@ -1,6 +1,5 @@
 #! /bin/bash
 
-# kubectl apply -f src/resources/01-app-deployment.yml
 kubectl create ns opentelemetry
 kubectl apply -f src/resources/01-rbac.yml
 kubectl apply -f src/resources/02-otel-collector.yml
