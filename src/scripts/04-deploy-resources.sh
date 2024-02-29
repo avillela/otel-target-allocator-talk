@@ -9,3 +9,4 @@ kubectl apply -f src/resources/04-service-monitor.yml
 kubectl apply -f src/resources/05-python-client.yml
 kubectl apply -f src/resources/06-python-server.yml
 # kubectl apply -f src/resources/07-k8s-metrics.yml
+kubectl apply -f src/resources/08-python-app.yml

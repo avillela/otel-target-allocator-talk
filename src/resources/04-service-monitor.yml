@@ -18,3 +18,5 @@ spec:
       interval: 15s
     - port: py-server-port
       interval: 15s
+    - port: prom
+      path: /metrics

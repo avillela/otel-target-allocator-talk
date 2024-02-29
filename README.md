@@ -42,10 +42,10 @@ Deploy Kubernetes resources
 Check Collector logs:
 
 ```bash
-# Option 1
+# Tail all the Collector logs
 kubectl logs -l app.kubernetes.io/component=opentelemetry-collector -n opentelemetry --follow
 
-# Option 2
+# Tail the Collector logs and return items containing "Name:"
 kubectl logs otelcol-collector-0 -n opentelemetry | grep "Name:" | sort | uniq
 ```
 

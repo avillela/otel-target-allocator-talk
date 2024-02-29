@@ -3,6 +3,8 @@ flask<3
 werkzeug<3
 requests==2.31.0
 
+prometheus_client==0.20.0
+
 # For version compatibility issues
 opentelemetry-distro==0.44b0
 opentelemetry-sdk==1.23.0

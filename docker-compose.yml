@@ -49,6 +49,15 @@ services:
         - OTEL_PYTHON_LOG_LEVEL=debug
       stop_grace_period: 1s
 
+  py-prometheus-app:
+    container_name: py-prometheus-app
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-py-prometheus-app
+    build:
+      context: ${CONTEXT}
+      dockerfile: Dockerfile.app
+    ports:
+      - "8080:8080"
+    stop_grace_period: 1s
 
   # ********************
   # Telemetry Components
