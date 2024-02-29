@@ -4,3 +4,4 @@ pyenv.cfg
 .DS_Store
 *otelcol-config-extras*.yml
 *test*
+*secret*
