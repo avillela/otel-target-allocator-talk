@@ -1,5 +1,10 @@
 # otel-target-allocator-talk
 
+This doc is based on the following two blog posts:
+
+* [ngest Prometheus Metrics with OpenTelemetry](https://trstringer.com/opentelemetry-prometheus-metrics/)
+* [Troubleshooting the OpenTelemetry Target Allocator](https://trstringer.com/opentelemetry-target-allocator-troubleshooting/)
+
 ## Installation
 
 ### 1- Install KinD and set up k8s cluster
