@@ -2,4 +2,6 @@ venv*
 pyenv.cfg
 *example*
 .DS_Store
-otelcol-config-extras*.yml
+*otelcol-config-extras*.yml
+*test*
+*secret*

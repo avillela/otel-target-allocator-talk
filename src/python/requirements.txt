@@ -1,8 +1,12 @@
-flask==2.3.2
+# Setting flask version to >3 per this: https://github.com/open-telemetry/opentelemetry.io/pull/4034#issuecomment-1962066146
+flask<3
+werkzeug<3
 requests==2.31.0
 
-# # For version compatibility issues
-opentelemetry-distro==0.40b0
-opentelemetry-sdk==1.19.0
-opentelemetry-api==1.19.0
-opentelemetry-exporter-otlp==1.19.0
+prometheus_client==0.20.0
+
+# For version compatibility issues
+opentelemetry-distro==0.44b0
+opentelemetry-sdk==1.23.0
+opentelemetry-api==1.23.0
+opentelemetry-exporter-otlp==1.23.0

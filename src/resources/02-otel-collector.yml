@@ -12,6 +12,12 @@ spec:
       enabled: true
       serviceMonitorSelector:
         app: my-app
+  env:
+    - name: LS_TOKEN
+      valueFrom:
+        secretKeyRef:
+          key: LS_TOKEN
+          name: otel-collector-secret
   config: |
     receivers:
       otlp:
@@ -41,6 +47,10 @@ spec:
       #   endpoint: "jaeger:4317"
       #   tls:
       #     insecure: true
+      otlp/ls:
+        endpoint: "ingest.lightstep.com:443"
+        headers:
+          "lightstep-access-token": "${LS_TOKEN}"
       logging:
         verbosity: detailed
 
@@ -49,14 +59,12 @@ spec:
         traces:
           receivers: [otlp]
           processors: [batch]
-          # exporters: [logging, spanmetrics]
-          exporters: [logging]
+          exporters: [otlp/ls, logging]
         metrics:
-          # receivers: [otlp, spanmetrics, prometheus]
           receivers: [otlp, prometheus]
           processors: []
-          exporters: [logging]
+          exporters: [otlp/ls, logging]
         logs:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [otlp/ls, logging]

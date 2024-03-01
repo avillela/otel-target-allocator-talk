@@ -1,5 +1,10 @@
 # otel-target-allocator-talk
 
+This doc is based on the following two blog posts:
+
+* [ngest Prometheus Metrics with OpenTelemetry](https://trstringer.com/opentelemetry-prometheus-metrics/)
+* [Troubleshooting the OpenTelemetry Target Allocator](https://trstringer.com/opentelemetry-target-allocator-troubleshooting/)
+
 ## Installation
 
 ### 1- Install KinD and set up k8s cluster
@@ -42,13 +47,16 @@ Deploy Kubernetes resources
 Check Collector logs:
 
 ```bash
-# Option 1
+# Tail all the Collector logs
 kubectl logs -l app.kubernetes.io/component=opentelemetry-collector -n opentelemetry --follow
 
-# Option 2
-kubectl logs otelcol-collector-0 -n opentelemetry | grep "Name:" | sort | uniq | xsel -b
+# Tail the Collector logs and return items containing "Name:"
+kubectl logs otelcol-collector-0 -n opentelemetry | grep "Name:" | sort | uniq
+```
 
+Check Target Allocator logs:
 
+```bash
 kubectl logs -l app.kubernetes.io/component=opentelemetry-targetallocator -n opentelemetry --follow
 ```
 
