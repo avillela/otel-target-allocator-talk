@@ -36,21 +36,63 @@ docker exec -it otel-target-allocator-talk-control-plane crictl images | grep ta
 
 Reference [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
 
-### 3- Kubernetes deployment
+### 3a- Kubernetes deployment (Lightstep backend)
 
-Deploy Kubernetes resources
+> 🚨 If you want to send telemetry to Lightstep, you'll need to follow the steps below, and skip **Step 3b**.
+
+First, create a secrets file for the Lightstep token.
+
+```bash
+tee -a src/resources/00-secret.yaml <<EOF
+ apiVersion: v1
+ kind: Secret
+ metadata:
+   name: otel-collector-secret
+   namespace: opentelemetry
+ data:
+   LS_TOKEN: <base64-encoded-LS-token>
+ type: "Opaque"
+EOF
+```
+
+Replace <base64-encoded-LS-token> with your own [Lightstep Access Token] (https://docs.lightstep.com/docs/create-and-manage-access-tokens#create-an-access-token)
+
+Be sure to Base64 encode it like this:
+
+```bash
+echo <LS-access-token> | base64
+```
+
+Or you can Base64-encode it through [this website](https://www.base64encode.org/).
+
+Finally, deploy the Kubernetes resources:
+
+```bash
+./src/scripts/04-deploy-resources-ls-backend.sh
+```
+
+
+## 3b - Kubernetes Deployment (Collector stdout only)
+
+> 🚨 If you want the Collector to emit telemetry to the Collector's stdout, then skip **Step 3a**.
+
+Now you are ready to deploy the Kubernetes resources
 
 ```bash
 ./src/scripts/04-deploy-resources.sh
 ```
 
-Check Collector logs:
+## 4- Check logs
+
+This command will tail the Collector logs
 
 ```bash
-# Tail all the Collector logs
 kubectl logs -l app.kubernetes.io/component=opentelemetry-collector -n opentelemetry --follow
+```
 
-# Tail the Collector logs and return items containing "Name:"
+This command will return unique items from the Collector logs containing "Name:"
+
+```bash
 kubectl logs otelcol-collector-0 -n opentelemetry | grep "Name:" | sort | uniq
 ```
 
