@@ -27,7 +27,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app
+  name: py-prometheus-app
   namespace: opentelemetry
   labels:
     app: my-app
