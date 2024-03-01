@@ -10,6 +10,7 @@ spec:
     serviceAccount: opentelemetry-targetallocator-sa
     prometheusCR:
       enabled: true
+      ## If uncommented, only service monitors with this label will get picked up
       # serviceMonitorSelector:
       #   app: my-app
   config: |

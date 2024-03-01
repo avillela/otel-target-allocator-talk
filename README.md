@@ -125,14 +125,17 @@ Sample output:
 
 ```json
 {
+  "serviceMonitor/opentelemetry/sm-example/2": {
+    "_link": "/jobs/serviceMonitor%2Fopentelemetry%2Fsm-example%2F2/targets"
+  },
+  "serviceMonitor/opentelemetry/sm-example/0": {
+    "_link": "/jobs/serviceMonitor%2Fopentelemetry%2Fsm-example%2F0/targets"
+  },
+  "serviceMonitor/opentelemetry/sm-example/1": {
+    "_link": "/jobs/serviceMonitor%2Fopentelemetry%2Fsm-example%2F1/targets"
+  },
   "otel-collector": {
     "_link": "/jobs/otel-collector/targets"
-  },
-  "serviceMonitor/opentelemetry/my-app/1": {
-    "_link": "/jobs/serviceMonitor%2Fopentelemetry%2Fmy-app%2F1/targets"
-  },
-  "serviceMonitor/opentelemetry/my-app/0": {
-    "_link": "/jobs/serviceMonitor%2Fopentelemetry%2Fmy-app%2F0/targets"
   }
 }
 ```
