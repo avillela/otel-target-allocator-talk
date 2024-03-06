@@ -34,14 +34,7 @@ spec:
     processors:
       batch:
 
-    # connectors:
-    #   spanmetrics:
-
     exporters:
-      # otlp:
-      #   endpoint: "jaeger:4317"
-      #   tls:
-      #     insecure: true
       logging:
         verbosity: detailed
 

@@ -40,14 +40,7 @@ spec:
     processors:
       batch:
 
-    # connectors:
-    #   spanmetrics:
-
     exporters:
-      # otlp:
-      #   endpoint: "jaeger:4317"
-      #   tls:
-      #     insecure: true
       otlp/ls:
         endpoint: "ingest.lightstep.com:443"
         headers:
