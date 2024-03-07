@@ -1,4 +1,6 @@
-# otel-target-allocator-talk
+# OpenTelemetry Target Allocator Example
+
+This is the companion repo for the KubeCon EU 2024 Talk, ["Prometheus and OpenTelemetry: Better Together"](https://kccnceu2024.sched.com/event/1YePz/prometheus-and-opentelemetry-better-together-adriana-villela-servicenow-cloud-observability-reese-lee-new-relic).
 
 This doc is based on the following two blog posts:
 
