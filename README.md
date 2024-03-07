@@ -2,10 +2,12 @@
 
 This is the companion repo for the KubeCon EU 2024 Talk, ["Prometheus and OpenTelemetry: Better Together"](https://kccnceu2024.sched.com/event/1YePz/prometheus-and-opentelemetry-better-together-adriana-villela-servicenow-cloud-observability-reese-lee-new-relic).
 
-This doc is based on the following two blog posts:
+This tutorial is based on the following two blog posts:
 
 * [Ingest Prometheus Metrics with OpenTelemetry](https://trstringer.com/opentelemetry-prometheus-metrics/)
 * [Troubleshooting the OpenTelemetry Target Allocator](https://trstringer.com/opentelemetry-target-allocator-troubleshooting/)
+
+Check out the demo video [here](https://youtu.be/dRbUKhBtMg4), which shows you how to run this project in GitHub Codespaces.
 
 ## Installation
 
@@ -38,9 +40,24 @@ docker exec -it otel-target-allocator-talk-control-plane crictl images | grep ta
 
 Reference [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
 
-### 3a- Kubernetes deployment (Lightstep backend)
 
-> 🚨 If you want to send telemetry to Lightstep, you'll need to follow the steps below, and skip **Step 3b**.
+## 3a - Kubernetes Deployment (Collector stdout only)
+
+> 🚨 This step deploys resources to send telemetry to the OTel Collector's sdout only. If you want to send telemetry to [ServiceNow Cloud Observability (formerly known as Lightstep)](https://www.servicenow.com/products/observability.html), you'll need to skip this step and follow [Step 3b](#3b--kubernetes-deployment-servicenow-cloud-observability-backend) instead.
+
+Now you are ready to deploy the Kubernetes resources
+
+```bash
+./src/scripts/04-deploy-resources.sh
+```
+
+### 3b- Kubernetes deployment (ServiceNow Cloud Observability backend)
+
+> 🚨 If you want to send telemetry to [ServiceNow Cloud Observability (formerly known as Lightstep)](https://www.servicenow.com/products/observability.html), you'll need to follow the steps below, and skip [Step 3a](#3a---kubernetes-deployment-collector-stdout-only).
+
+To send telemetry to ServiceNow Cloud Observability, you will first need a Cloud Observability account. You will also need to obtain an [access token](https://docs.lightstep.com/docs/create-and-manage-access-tokens#create-an-access-token).
+
+We're going to store the access token in a Kubernetes secret, and will map the secret to an environment variabe in the  [`OpenTelemetryCollector CR`](https://github.com/avillela/otel-target-allocator-talk/blob/a2763917142957f8f6e32d137e35a6d0e4ea4f55/src/resources/02-otel-collector-ls.yml#L17-L21).
 
 First, create a secrets file for the Lightstep token.
 
@@ -57,7 +74,7 @@ tee -a src/resources/00-secret.yaml <<EOF
 EOF
 ```
 
-Replace <base64-encoded-LS-token> with your own [Lightstep Access Token] (https://docs.lightstep.com/docs/create-and-manage-access-tokens#create-an-access-token)
+Replace <base64-encoded-LS-token> with your own [access token] (https://docs.lightstep.com/docs/create-and-manage-access-tokens#create-an-access-token)
 
 Be sure to Base64 encode it like this:
 
@@ -71,17 +88,6 @@ Finally, deploy the Kubernetes resources:
 
 ```bash
 ./src/scripts/04-deploy-resources-ls-backend.sh
-```
-
-
-## 3b - Kubernetes Deployment (Collector stdout only)
-
-> 🚨 If you want the Collector to emit telemetry to the Collector's stdout, then skip **Step 3a**.
-
-Now you are ready to deploy the Kubernetes resources
-
-```bash
-./src/scripts/04-deploy-resources.sh
 ```
 
 ## 4- Check logs
