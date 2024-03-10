@@ -2,14 +2,21 @@
 
 This is the companion repo for the KubeCon EU 2024 Talk, ["Prometheus and OpenTelemetry: Better Together"](https://kccnceu2024.sched.com/event/1YePz/prometheus-and-opentelemetry-better-together-adriana-villela-servicenow-cloud-observability-reese-lee-new-relic).
 
-This tutorial is based on the following two blog posts:
+In this example, we will:
 
-* [Ingest Prometheus Metrics with OpenTelemetry](https://trstringer.com/opentelemetry-prometheus-metrics/)
-* [Troubleshooting the OpenTelemetry Target Allocator](https://trstringer.com/opentelemetry-target-allocator-troubleshooting/)
+1. Install [KinD (KUbernetes in Docker)](https://kind.sigs.k8s.io)
+2. Install the `ServiceMonitor` and `PodMonitor` Prometheus CRs
+3. Install the OTel Operator
+4. Deploy 3 Python services:
+    * The Python [Client](./src/python/client.py) and [Server](./src/python/server.py) services are instrumented using OpenTelemetry, using a combination of both auto-instrumentation via the OTel Operator, and manual instrumentation
+    * The [Prometheus app](./src/python/app.py) emits Prometheus metrics which are picked up by the [`ServiceMonitor`](./src/resources/04-service-monitor.yml) CR and are added to the [Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/prometheusreceiver/README.md)'s scrape config via the [OTel Operator's Target Allocator](https://github.com/open-telemetry/opentelemetry-operator/tree/main/cmd/otel-allocator).
 
-Check out the demo video [here](https://youtu.be/dRbUKhBtMg4), which shows you how to run this project in GitHub Codespaces.
+The Target Allocator configuration and sample [Python Prometheus app](./src/python/app.py) are based on [this tutorial](https://trstringer.com/opentelemetry-prometheus-metrics/).
+
 
 ## Installation
+
+This project can be run using GitHub Codespaces. To learn how, [check out this video](https://youtu.be/dRbUKhBtMg4).
 
 ### 1- Install KinD and set up k8s cluster
 
@@ -112,15 +119,12 @@ kubectl logs -l app.kubernetes.io/component=opentelemetry-targetallocator -n ope
 
 ## Troubleshooting
 
-Based on [this article](kubectl port-forward svc/otelcol-targetallocator 8080:80)
+Based on [this article](https://trstringer.com/opentelemetry-target-allocator-troubleshooting/)
 
 Expose target allocator port
 
 ```bash
 kubectl port-forward svc/otelcol-targetallocator -n opentelemetry 8080:80
-
-# If above errs out
-kubectl port-forward pods/$(kubectl -n opentelemetry get pods -o jsonpath='{.items[1].metadata.name}') 8080:80 -n opentelemetry
 ```
 
 So we can get list of jobs
