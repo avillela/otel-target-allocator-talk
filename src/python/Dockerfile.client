@@ -11,7 +11,5 @@ RUN pip install --upgrade pip
 ADD requirements.txt .
 RUN pip install -r requirements.txt
 
-RUN opentelemetry-bootstrap -a install
-
 ADD *.py ./
-CMD ["opentelemetry-instrument", "python", "/app/client.py"]
+CMD ["python", "/app/client.py"]

@@ -5,7 +5,7 @@
 kubectl --context kind-otel-target-allocator-talk apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
 kubectl --context kind-otel-target-allocator-talk apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
 
-# Install cert-manager
+# Install cert-manager, since it's a dependency of the OTel Operator
 kubectl --context kind-otel-target-allocator-talk apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.3/cert-manager.yaml
 
 # Need to wait for cert-manager to finish before installing the operator
