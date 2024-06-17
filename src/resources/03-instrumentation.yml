@@ -10,6 +10,8 @@ spec:
   propagators:
     - tracecontext
     - baggage
+  sampler:
+    type: always_off
   python:
     env:
       - name: OTEL_METRICS_EXPORTER
