@@ -5,3 +5,4 @@ pyenv.cfg
 *otelcol-config-extras*.yml
 *test*
 *secret*
+*scratchpad*
