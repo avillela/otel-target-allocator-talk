@@ -1,4 +1,3 @@
-version: '0.1'
 x-default-logging: &logging
   options:
     max-size: "5m"
