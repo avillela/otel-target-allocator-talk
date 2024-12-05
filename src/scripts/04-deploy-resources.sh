@@ -9,3 +9,4 @@ kubectl apply -f src/resources/04a-pod-monitor.yml
 kubectl apply -f src/resources/05-python-client.yml
 kubectl apply -f src/resources/06-python-server.yml
 kubectl apply -f src/resources/08-python-app.yml
+kubectl apply -f src/resources/09-jaeger.yml

@@ -7,7 +7,8 @@ metadata:
   namespace: opentelemetry
 spec:
   mode: statefulset
-  image: otel/opentelemetry-collector-contrib:0.102.1
+  # image: otel/opentelemetry-collector-contrib:0.102.1
+  image: ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector:0.7.0
   targetAllocator:
     enabled: true
     serviceAccount: opentelemetry-targetallocator-sa
@@ -35,7 +36,11 @@ spec:
       batch: {}
 
     exporters:
-      logging:
+      otlp:
+        endpoint: 'otel-jaeger-collector:4317'
+        tls:
+          insecure: true
+      debug:
         verbosity: detailed
 
     service:
@@ -43,12 +48,12 @@ spec:
         traces:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [otlp,debug]
         metrics:
           receivers: [otlp, prometheus]
           processors: []
-          exporters: [logging]
+          exporters: [debug]
         logs:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [debug]

@@ -13,5 +13,10 @@ kubectl --context kind-otel-target-allocator-talk apply -f https://github.com/ce
 echo "Taking a 90-second nap while the cert-manager pods come up..."
 sleep 90
 
-# Install operator
+# Install OTel operator
 kubectl --context kind-otel-target-allocator-talk apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.102.0/opentelemetry-operator.yaml
+
+# Install Jaeger operator
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm repo update
+helm install --namespace jaeger-operator --create-namespace jaeger-operator jaegertracing/jaeger-operator
