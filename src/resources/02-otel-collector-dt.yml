@@ -1,0 +1,75 @@
+# API reference https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md
+# Refs for v1beta1 config: https://github.com/open-telemetry/opentelemetry-operator/issues/3011#issuecomment-2154118998
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: otelcol
+  namespace: opentelemetry
+spec:
+  mode: statefulset
+  # image: otel/opentelemetry-collector-contrib:0.102.1
+  image: ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector:0.7.0
+  targetAllocator:
+    enabled: true
+    serviceAccount: opentelemetry-targetallocator-sa
+    prometheusCR:
+      enabled: true
+      podMonitorSelector: {}
+      serviceMonitorSelector: {}
+      ## If uncommented, only service monitors with this label will get picked up
+      #   app: my-app
+  env:
+    - name: DT_TOKEN
+      valueFrom:
+        secretKeyRef:
+          key: DT_TOKEN
+          name: otel-collector-secret
+    - name: DT_ENV_ID
+      valueFrom:
+        secretKeyRef:
+          key: DT_ENV_ID
+          name: otel-collector-secret
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc: {}
+          http: {}
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: 'otel-collector'
+              scrape_interval: 10s
+              static_configs:
+              - targets: [ '0.0.0.0:8888' ]
+
+    processors:
+      cumulativetodelta: {}
+      batch: {}
+
+    exporters:
+      otlp:
+        endpoint: 'otel-jaeger-collector:4317'
+        tls:
+          insecure: true
+      otlphttp:
+        endpoint: "https://${DT_ENV_ID}.live.dynatrace.com/api/v2/otlp"
+        headers:
+          Authorization: "Api-Token ${DT_TOKEN}"
+      debug:
+        verbosity: detailed
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp,otlphttp,debug]
+        metrics:
+          receivers: [otlp, prometheus]
+          processors: [cumulativetodelta]
+          exporters: [otlphttp,debug]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlphttp,debug]
