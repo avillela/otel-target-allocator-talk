@@ -1,3 +1,6 @@
+## Deploy Jaeger so we can also check to make sure that Traces are being sent out
+## to an external system
+
 ---
 # Source: opentelemetry-demo/charts/jaeger/templates/allinone-sa.yaml
 apiVersion: v1

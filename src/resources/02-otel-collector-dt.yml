@@ -7,7 +7,8 @@ metadata:
   namespace: opentelemetry
 spec:
   mode: statefulset
-  # image: otel/opentelemetry-collector-contrib:0.102.1
+  # Using an older version of the DT Collector (based on an older Collector contrib version) 
+  # where Python auto-instrumentation and context propagation doesn't break
   image: ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector:0.7.0
   targetAllocator:
     enabled: true

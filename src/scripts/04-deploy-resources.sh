@@ -6,8 +6,9 @@ if [ $# -eq 0 ]; then
     SUFFIX=""
     echo "** No arguments supplied **"
 else
+    # Additional configuration for deploying to SaaS backends
     SUFFIX="-$1"
-    echo "** Suffix is ${SUFFIX} **"
+    echo "** Suffix is '${SUFFIX}' **"
     kubectl apply -f src/resources/00-secret${SUFFIX}.yml
 fi
 
