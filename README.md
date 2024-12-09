@@ -52,7 +52,7 @@ docker exec -it otel-target-allocator-talk-control-plane crictl images | grep ta
 Reference [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
 
 
-## 3a - Kubernetes Deployment (Collector stdout only)
+### 3a - Kubernetes Deployment (Collector stdout only)
 
 > 🚨 This step deploys resources to send telemetry to the OTel Collector's sdout only. If you want to send telemetry to [ServiceNow Cloud Observability (formerly known as Lightstep)](https://www.servicenow.com/products/observability.html), you'll need to skip this step and follow [Step 3b](#3b--kubernetes-deployment-servicenow-cloud-observability-backend) instead.
 
@@ -147,7 +147,7 @@ Finally, deploy the Kubernetes resources:
 ./src/scripts/04-deploy-resources.sh ls
 ```
 
-## 4- Check logs
+### 4- Check logs
 
 This command will tail the Collector logs
 
