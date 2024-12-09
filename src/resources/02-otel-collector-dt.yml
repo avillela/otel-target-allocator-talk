@@ -7,9 +7,9 @@ metadata:
   namespace: opentelemetry
 spec:
   mode: statefulset
-  # Using an older version of the Collector contrib where Python auto-instrumentation 
-  # and context propagation doesn't break
-  image: otel/opentelemetry-collector-contrib:0.102.1
+  # Using an older version of the DT Collector (based on an older Collector contrib version) 
+  # where Python auto-instrumentation and context propagation doesn't break
+  image: ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector:0.7.0
   targetAllocator:
     enabled: true
     serviceAccount: opentelemetry-targetallocator-sa
@@ -19,6 +19,17 @@ spec:
       serviceMonitorSelector: {}
       ## If uncommented, only service monitors with this label will get picked up
       #   app: my-app
+  env:
+    - name: DT_TOKEN
+      valueFrom:
+        secretKeyRef:
+          key: DT_TOKEN
+          name: otel-collector-secret
+    - name: DT_ENV_ID
+      valueFrom:
+        secretKeyRef:
+          key: DT_ENV_ID
+          name: otel-collector-secret
   config:
     receivers:
       otlp:
@@ -34,6 +45,7 @@ spec:
               - targets: [ '0.0.0.0:8888' ]
 
     processors:
+      cumulativetodelta: {}
       batch: {}
 
     exporters:
@@ -41,6 +53,10 @@ spec:
         endpoint: 'otel-jaeger-collector:4317'
         tls:
           insecure: true
+      otlphttp:
+        endpoint: "https://${DT_ENV_ID}.live.dynatrace.com/api/v2/otlp"
+        headers:
+          Authorization: "Api-Token ${DT_TOKEN}"
       debug:
         verbosity: detailed
 
@@ -49,12 +65,12 @@ spec:
         traces:
           receivers: [otlp]
           processors: [batch]
-          exporters: [otlp,debug]
+          exporters: [otlp,otlphttp,debug]
         metrics:
           receivers: [otlp, prometheus]
-          processors: []
-          exporters: [debug]
+          processors: [cumulativetodelta]
+          exporters: [otlphttp,debug]
         logs:
           receivers: [otlp]
           processors: [batch]
-          exporters: [debug]
+          exporters: [otlphttp,debug]

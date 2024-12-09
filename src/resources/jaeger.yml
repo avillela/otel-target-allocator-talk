@@ -1,0 +1,6 @@
+## Tried using the Jaeger operator at one point, but it hates me.
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: simple-prod
+  namespace: opentelemetry

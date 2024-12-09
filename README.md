@@ -62,7 +62,52 @@ Now you are ready to deploy the Kubernetes resources
 ./src/scripts/04-deploy-resources.sh
 ```
 
-### 3b- Kubernetes deployment (ServiceNow Cloud Observability backend)
+### 3b- Kubernetes deployment with Dynatrace backend
+
+> 🚨 If you want to send telemetry to [Dynatrace)](https://www.dynatrace.com), you'll need to follow the steps below, and skip [Step 3a](#3a---kubernetes-deployment-collector-stdout-only).
+
+To send telemetry to Dynatrace, you will first need a [Dynatrace free trial account](https://www.dynatrace.com/signup/). You will also need to obtain an [access token](https://docs.dynatrace.com/docs/analyze-explore-automate/dynatrace-for-ai-observability/machine-learning-platforms/bedrock#create-a-dynatrace-token).
+
+We're going to store the access token in a Kubernetes secret, and will map the secret to an environment variabe in the  [`OpenTelemetryCollector CR`](https://github.com/avillela/otel-target-allocator-talk/main/src/resources/02-otel-collector-dt.yml#L17-L21).
+
+First, create a secrets file for the Lightstep token.
+
+```bash
+tee -a src/resources/00-secret-dt.yaml <<EOF
+ apiVersion: v1
+ kind: Secret
+ metadata:
+   name: otel-collector-secret
+   namespace: opentelemetry
+ data:
+   DT_TOKEN: <base64-encoded-dynatrace-token>
+   DT_ENV_ID: <base64-encoded-dynatrace-environment-identifier>
+ type: "Opaque"
+EOF
+```
+
+Replace `<base64-encoded-LS-token>` with your own [access token] (https://docs.dynatrace.com/docs/discover-dynatrace/references/dynatrace-api/basics/dynatrace-api-authentication#create-token). Make sure you grant the correct permissions to your token so that you Dynatrace can ingest traces (`opentelemetryTrace.ingest`), logs (`logs.ingest`), and metrics (`metrics.ingest`). See [Dynatrace Token Scopes](https://docs.dynatrace.com/docs/discover-dynatrace/references/dynatrace-api/basics/dynatrace-api-authentication#token-scopes).
+
+Replace `<base64-encoded-dynatrace-environment-identifier>` with your own environment ID. Your Dynatrace tenant will have a URL like this: `https://<dynatrace-environment-identifier>.apps.dynatrace.com`. The part before between `https://` and `apps.dynatrace.com` is what your environment identifier. Make sure you base64 encode that value before adding it to your `secrets` YAML.
+
+Be sure to Base64 encode it like this:
+
+```bash
+echo <LS-access-token> | base64
+```
+
+Or you can Base64-encode it through [this website](https://www.base64encode.org/).
+
+Finally, deploy the Kubernetes resources:
+
+```bash
+# Don't forget to pass the "dt" argument
+./src/scripts/04-deploy-resources.sh dt
+```
+
+> For more on OTel Collector configuration with Dynatrace, check out [this doc](https://docs.dynatrace.com/docs/ingest-from/opentelemetry/collector/configuration).
+
+### 3c- Kubernetes deployment with ServiceNow Cloud Observability backend
 
 > 🚨 If you want to send telemetry to [ServiceNow Cloud Observability (formerly known as Lightstep)](https://www.servicenow.com/products/observability.html), you'll need to follow the steps below, and skip [Step 3a](#3a---kubernetes-deployment-collector-stdout-only).
 
@@ -73,7 +118,7 @@ We're going to store the access token in a Kubernetes secret, and will map the s
 First, create a secrets file for the Lightstep token.
 
 ```bash
-tee -a src/resources/00-secret.yaml <<EOF
+tee -a src/resources/00-secret-ls.yaml <<EOF
  apiVersion: v1
  kind: Secret
  metadata:
@@ -98,7 +143,8 @@ Or you can Base64-encode it through [this website](https://www.base64encode.org/
 Finally, deploy the Kubernetes resources:
 
 ```bash
-./src/scripts/04-deploy-resources-ls-backend.sh
+# Don't forget to pass the "ls" argument
+./src/scripts/04-deploy-resources.sh ls
 ```
 
 ## 4- Check logs
