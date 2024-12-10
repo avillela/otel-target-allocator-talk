@@ -20,7 +20,24 @@ The Target Allocator configuration and sample [Python Prometheus app](./src/pyth
 
 ## Installation
 
-This project can be run using GitHub Codespaces. To learn how, [check out this video](https://youtu.be/dRbUKhBtMg4).
+This project can be run as a [Development (Dev) Container](https://containers.dev/) in:
+
+* GitHub Codespaces. [Check out this video](https://youtu.be/dRbUKhBtMg4) to learn how.
+* VSCode with the [Dev Containers plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers). See Step 0 below to learn how.
+
+Or you could just run all of this sans Dev Containers, if you prefer.
+
+### 0- Build and run the Dev Container locally (optional)
+
+This step requires the [Dev Container CLI](https://code.visualstudio.com/docs/devcontainers/devcontainer-cli). You can also build and run your Dev Container using the [Dev Container command palette in VSCode](https://code.visualstudio.com/docs/devcontainers/create-dev-container).
+
+```bash
+git clone https://github.com/avillela/otel-target-allocator-talk.git
+cd otel-target-allocator-talk
+
+devcontainer build --no-cache
+devcontainer open
+```
 
 ### 1- Install KinD and set up k8s cluster
 
