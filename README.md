@@ -23,7 +23,7 @@ The Target Allocator configuration and sample [Python Prometheus app](./src/pyth
 This project can be run as a [Development (Dev) Container](https://containers.dev/) in:
 
 * GitHub Codespaces. [Check out this video](https://youtu.be/dRbUKhBtMg4) to learn how.
-* VSCode with the [Dev Containers plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers). Go to [Step 0](#1--install-kind-and-set-up-k8s-cluster).
+* VSCode with the [Dev Containers plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers). Go to [Step 0](#0--build-and-run-the-dev-container-locally-optional).
 
 Or, if Dev Containers aren't your jam, then skip [Step 0](#0--build-and-run-the-dev-container-locally-optional) and go straight to [Step 1](#1--install-kind-and-set-up-k8s-cluster).
 
@@ -71,7 +71,7 @@ Reference [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-imag
 
 ### 3a - Kubernetes Deployment (Collector stdout only)
 
-> 🚨 This step deploys resources to send telemetry to the OTel Collector's sdout only. If you want to send telemetry to [ServiceNow Cloud Observability (formerly known as Lightstep)](https://www.servicenow.com/products/observability.html), you'll need to skip this step and follow [Step 3b](#3b--kubernetes-deployment-servicenow-cloud-observability-backend) instead.
+> 🚨 This step deploys resources to send telemetry to the OTel Collector's sdout only. If you want to send telemetry to [Dynatrace](https://dt-url.net/dt-trial) or [ServiceNow Cloud Observability (formerly known as Lightstep)](https://www.servicenow.com/products/observability.html), you'll need to skip this step and follow [Step 3b](#3b--kubernetes-deployment-with-dynatrace-backend) or [Step 3c](#3c--kubernetes-deployment-with-servicenow-cloud-observability-backend), respectively, instead.
 
 Now you are ready to deploy the Kubernetes resources
 
@@ -81,7 +81,7 @@ Now you are ready to deploy the Kubernetes resources
 
 ### 3b- Kubernetes deployment with Dynatrace backend
 
-> 🚨 If you want to send telemetry to [Dynatrace)](https://www.dynatrace.com), you'll need to follow the steps below, and skip [Step 3a](#3a---kubernetes-deployment-collector-stdout-only) and [Step 3c](#3c--kubernetes-deployment-with-servicenow-cloud-observability-backend).
+> 🚨 If you want to send telemetry to [Dynatrace)](https://dt-url.net/dt-trial), you'll need to follow the steps below, and skip [Step 3a](#3a---kubernetes-deployment-collector-stdout-only) and [Step 3c](#3c--kubernetes-deployment-with-servicenow-cloud-observability-backend).
 
 To send telemetry to Dynatrace, you will first need a [Dynatrace free trial account](https://dt-url.net/dt-trial). You will also need to obtain an [access token](https://adri-v.medium.com/how-do-i-send-opentelemetry-data-to-dynatrace-842cebb21286).
 
